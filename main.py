@@ -1,7 +1,5 @@
 from flask import Flask, url_for, render_template
 
-#ravani
-
 #inicializacao
 app = Flask(__name__)
 
