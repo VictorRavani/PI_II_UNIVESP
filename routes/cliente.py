@@ -94,23 +94,33 @@ def deletar_cliente(cliente_id):
 
 @cliente_route.route('/pesquisa-cep')
 def listar_ceps():
-    """ Listar os clientes """
+    """Listar os dados do CEP"""
 
     cep = '05131110'
+    cep = cep.replace("-", "").replace(".", "").replace(" ", "")
 
-    # Consulta o CEP se fornecido
-    uf, cidade, bairro = None, None, None
-    if cep:
-        link = f'https://viacep.com.br/ws/{cep}/json/'
-        requisicao = requests.get(link)
-        dic_requisicao = requisicao.json()
+    # Inicializa variáveis
+    uf, cidade, bairro, mensagem_erro = None, None, None, None
 
-        print(requisicao)
+    if len(cep) == 8:
+        # Consulta o CEP se fornecido
+        try:
+            link = f'https://viacep.com.br/ws/{cep}/json/'
+            requisicao = requests.get(link)
+            dic_requisicao = requisicao.json()
 
-        uf = dic_requisicao.get('uf')
-        cidade = dic_requisicao.get('localidade')
-        bairro = dic_requisicao.get('bairro')
+            # Verifica se a resposta contém erros
+            if dic_requisicao.get('erro'):
+                mensagem_erro = "CEP não encontrado. Verifique o CEP e tente novamente."
+            else:
+                uf = dic_requisicao.get('uf')
+                cidade = dic_requisicao.get('localidade')
+                bairro = dic_requisicao.get('bairro')
 
-        print(uf, cidade, bairro)
+        except requests.RequestException as e:
+            mensagem_erro = f"Erro ao consultar o CEP: {e}"
+    else:
+        mensagem_erro = "CEP inválido. O CEP deve conter 8 dígitos."
 
-    return render_template('pesquisa_cep.html', uf=uf, cidade=cidade, bairro=bairro)
+    # Passa os dados e a mensagem de erro para o template
+    return render_template('pesquisa_cep.html', uf=uf, cidade=cidade, bairro=bairro, mensagem_erro=mensagem_erro)

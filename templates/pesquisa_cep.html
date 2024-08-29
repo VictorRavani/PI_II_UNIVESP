@@ -1,5 +1,17 @@
-<ul>
-    <li>UF: {{ uf }}</li>
-    <li>Cidade: {{ cidade }}</li>
-    <li>Bairro: {{ bairro }}</li>
-</ul>
+<!-- Verifica se há uma mensagem de erro e exibe -->
+{% if mensagem_erro %}
+    <div class="alert alert-danger" role="alert">
+        {{ mensagem_erro }}
+    </div>
+{% else %}
+    <!-- Exibe os dados do CEP se não houver erro -->
+    {% if uf and cidade and bairro %}
+        <ul>
+            <li>UF: {{ uf }}</li>
+            <li>Cidade: {{ cidade }}</li>
+            <li>Bairro: {{ bairro }}</li>
+        </ul>
+    {% else %}
+        <p>Não há dados para exibir.</p>
+    {% endif %}
+{% endif %}
