@@ -27,5 +27,12 @@
     <button type="submit" class="btn btn-primary">
         {% if cliente %}Salvar{% else %}Criar{% endif %}
     </button>
-  
+
+    <button type="submit" class="btn btn-primary"
+        c-get="{{ url_for('cliente.listar_ceps') }}"
+        c-target = "#pesquisa-cep"
+        data-bs-toggle="modal" data-bs-target="#caixaTextoCep">
+        Pesquisar CEP!
+    </button>
+
   </form>

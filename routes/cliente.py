@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, request
+import requests
 from database.cliente import CLIENTES
 
 cliente_route = Blueprint('cliente', __name__)
@@ -89,3 +90,27 @@ def deletar_cliente(cliente_id):
     global CLIENTES
     CLIENTES = [ c for c in CLIENTES if c ['id'] != cliente_id ] 
     return {'deletec': 'ok'}
+
+
+@cliente_route.route('/pesquisa-cep')
+def listar_ceps():
+    """ Listar os clientes """
+
+    cep = '05131110'
+
+    # Consulta o CEP se fornecido
+    uf, cidade, bairro = None, None, None
+    if cep:
+        link = f'https://viacep.com.br/ws/{cep}/json/'
+        requisicao = requests.get(link)
+        dic_requisicao = requisicao.json()
+
+        print(requisicao)
+
+        uf = dic_requisicao.get('uf')
+        cidade = dic_requisicao.get('localidade')
+        bairro = dic_requisicao.get('bairro')
+
+        print(uf, cidade, bairro)
+
+    return render_template('pesquisa_cep.html', uf=uf, cidade=cidade, bairro=bairro)
